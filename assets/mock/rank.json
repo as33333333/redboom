@@ -1,15 +1,39 @@
 {
-  "note": "示例数据 · 抖音排行榜采集（热榜/聚合）为后续版本，当前用于演示 UI",
+  "note": "示例数据 · 抖音排行榜采集（热榜/聚合）为后续版本，当前用于完整演示筛选联动。每条含 点赞/浏览/收藏 在 一天/三天/一周 的数值，博主含 涨粉 三时段数值。",
   "content": [
-    { "rank": 1, "id": "f1", "type": "video", "title": "3分钟搞定的隔夜饭神器，打工人必学", "author": "深夜下饭菜", "domain": "美食", "value": 210000, "metric": "like", "duration": 186, "publishedAt": "2026-07-01" },
-    { "rank": 2, "id": "c1", "type": "video", "title": "60平米出租屋爆改，花了不到3000块", "author": "小居家的日常", "domain": "家居", "value": 98000, "metric": "like", "duration": 214, "publishedAt": "2026-06-28" },
-    { "rank": 3, "id": "g1", "type": "video", "title": "跟练14天，肉眼可见瘦一圈", "author": "阿May练不动", "domain": "健身", "value": 52000, "metric": "like", "duration": 720, "publishedAt": "2026-06-30" },
-    { "rank": 4, "id": "f2", "type": "video", "title": "红烧肉不用焯水，这样做入口即化", "author": "深夜下饭菜", "domain": "美食", "value": 120000, "metric": "like", "duration": 240, "publishedAt": "2026-06-24" },
-    { "rank": 5, "id": "c3", "type": "image", "title": "厨房收纳｜9张图看懂小厨房怎么装", "author": "小居家的日常", "domain": "家居", "value": 24000, "metric": "like", "images": 9, "publishedAt": "2026-06-12" }
+    { "id": "f1", "type": "video", "title": "3分钟搞定的隔夜饭神器，打工人必学", "author": "深夜下饭菜", "authorId": "dy_foodie", "domain": "美食", "duration": 186, "publishedAt": "2026-07-01",
+      "metrics": { "like": { "1d": 210000, "3d": 512000, "7d": 890000 }, "view": { "1d": 1560000, "3d": 3900000, "7d": 7200000 }, "collect": { "1d": 132000, "3d": 320000, "7d": 610000 } } },
+    { "id": "c1", "type": "video", "title": "60平米出租屋爆改，花了不到3000块", "author": "小居家的日常", "authorId": "dy_homelife", "domain": "家居家装", "duration": 214, "publishedAt": "2026-06-28",
+      "metrics": { "like": { "1d": 98000, "3d": 240000, "7d": 430000 }, "view": { "1d": 862000, "3d": 2100000, "7d": 3800000 }, "collect": { "1d": 45000, "3d": 110000, "7d": 205000 } } },
+    { "id": "g1", "type": "video", "title": "跟练14天，肉眼可见瘦一圈", "author": "阿May练不动", "authorId": "dy_fitness", "domain": "运动健身", "duration": 720, "publishedAt": "2026-06-30",
+      "metrics": { "like": { "1d": 52000, "3d": 128000, "7d": 236000 }, "view": { "1d": 430000, "3d": 1020000, "7d": 1900000 }, "collect": { "1d": 61000, "3d": 148000, "7d": 275000 } } },
+    { "id": "f2", "type": "video", "title": "红烧肉不用焯水，这样做入口即化", "author": "深夜下饭菜", "authorId": "dy_foodie", "domain": "美食", "duration": 240, "publishedAt": "2026-06-24",
+      "metrics": { "like": { "1d": 76000, "3d": 190000, "7d": 356000 }, "view": { "1d": 620000, "3d": 1500000, "7d": 2800000 }, "collect": { "1d": 88000, "3d": 210000, "7d": 398000 } } },
+    { "id": "m1", "type": "video", "title": "早八素颜出门妆，5分钟搞定不脱妆", "author": "阿柠妆造", "authorId": "dy_makeup", "domain": "美妆", "duration": 168, "publishedAt": "2026-07-02",
+      "metrics": { "like": { "1d": 134000, "3d": 305000, "7d": 540000 }, "view": { "1d": 980000, "3d": 2300000, "7d": 4100000 }, "collect": { "1d": 96000, "3d": 228000, "7d": 420000 } } },
+    { "id": "c3", "type": "image", "title": "厨房收纳｜9张图看懂小厨房怎么装", "author": "小居家的日常", "authorId": "dy_homelife", "domain": "家居家装", "words": 620, "images": 9, "publishedAt": "2026-06-12",
+      "metrics": { "like": { "1d": 24000, "3d": 61000, "7d": 118000 }, "view": { "1d": 210000, "3d": 520000, "7d": 980000 }, "collect": { "1d": 19000, "3d": 47000, "7d": 92000 } } },
+    { "id": "k1", "type": "image", "title": "存钱攻略｜月薪5千也能一年存下5万", "author": "会算账的小林", "authorId": "dy_finance", "domain": "财经", "words": 880, "images": 6, "publishedAt": "2026-06-29",
+      "metrics": { "like": { "1d": 68000, "3d": 165000, "7d": 310000 }, "view": { "1d": 540000, "3d": 1280000, "7d": 2400000 }, "collect": { "1d": 112000, "3d": 268000, "7d": 500000 } } },
+    { "id": "p1", "type": "video", "title": "捡来的小猫第30天，会撒娇了", "author": "橘子和它的朋友", "authorId": "dy_pet", "domain": "宠物", "duration": 96, "publishedAt": "2026-07-03",
+      "metrics": { "like": { "1d": 156000, "3d": 360000, "7d": 620000 }, "view": { "1d": 1120000, "3d": 2600000, "7d": 4600000 }, "collect": { "1d": 28000, "3d": 68000, "7d": 130000 } } },
+    { "id": "t1", "type": "image", "title": "小个子显高穿搭｜155cm的夏日公式", "author": "穿搭日记aya", "authorId": "dy_fashion", "domain": "时尚穿搭", "words": 540, "images": 8, "publishedAt": "2026-06-27",
+      "metrics": { "like": { "1d": 47000, "3d": 118000, "7d": 224000 }, "view": { "1d": 380000, "3d": 920000, "7d": 1750000 }, "collect": { "1d": 72000, "3d": 175000, "7d": 332000 } } },
+    { "id": "j1", "type": "video", "title": "3个被低估的Excel技巧，效率翻倍", "author": "职场老王", "authorId": "dy_career", "domain": "知识科普", "duration": 302, "publishedAt": "2026-06-26",
+      "metrics": { "like": { "1d": 41000, "3d": 102000, "7d": 198000 }, "view": { "1d": 320000, "3d": 780000, "7d": 1500000 }, "collect": { "1d": 95000, "3d": 230000, "7d": 440000 } } },
+    { "id": "r1", "type": "video", "title": "一个人的露营，治好了我的精神内耗", "author": "野外的老周", "authorId": "dy_outdoor", "domain": "户外", "duration": 420, "publishedAt": "2026-06-25",
+      "metrics": { "like": { "1d": 88000, "3d": 210000, "7d": 390000 }, "view": { "1d": 700000, "3d": 1680000, "7d": 3100000 }, "collect": { "1d": 34000, "3d": 82000, "7d": 156000 } } },
+    { "id": "n1", "type": "image", "title": "带娃出行清单｜0-3岁必备24件", "author": "两娃妈日常", "authorId": "dy_mom", "domain": "母婴亲子", "words": 760, "images": 12, "publishedAt": "2026-06-23",
+      "metrics": { "like": { "1d": 33000, "3d": 84000, "7d": 162000 }, "view": { "1d": 260000, "3d": 640000, "7d": 1220000 }, "collect": { "1d": 78000, "3d": 190000, "7d": 366000 } } }
   ],
   "blogger": [
-    { "rank": 1, "id": "dy_foodie", "name": "深夜下饭菜", "domain": "美食", "fans": 1230000, "value": 82000, "metric": "fans" },
-    { "rank": 2, "id": "dy_homelife", "name": "小居家的日常", "domain": "家居", "fans": 486000, "value": 31000, "metric": "fans" },
-    { "rank": 3, "id": "dy_fitness", "name": "阿May练不动", "domain": "健身", "fans": 268000, "value": 12000, "metric": "fans" }
+    { "id": "dy_foodie", "name": "深夜下饭菜", "domain": "美食", "fans": 1230000, "gain": { "1d": 82000, "3d": 168000, "7d": 305000 } },
+    { "id": "dy_pet", "name": "橘子和它的朋友", "domain": "宠物", "fans": 760000, "gain": { "1d": 64000, "3d": 132000, "7d": 240000 } },
+    { "id": "dy_makeup", "name": "阿柠妆造", "domain": "美妆", "fans": 540000, "gain": { "1d": 58000, "3d": 119000, "7d": 210000 } },
+    { "id": "dy_homelife", "name": "小居家的日常", "domain": "家居家装", "fans": 486000, "gain": { "1d": 31000, "3d": 68000, "7d": 128000 } },
+    { "id": "dy_finance", "name": "会算账的小林", "domain": "财经", "fans": 420000, "gain": { "1d": 44000, "3d": 96000, "7d": 175000 } },
+    { "id": "dy_outdoor", "name": "野外的老周", "domain": "户外", "fans": 350000, "gain": { "1d": 38000, "3d": 79000, "7d": 148000 } },
+    { "id": "dy_fitness", "name": "阿May练不动", "domain": "运动健身", "fans": 268000, "gain": { "1d": 26000, "3d": 55000, "7d": 102000 } },
+    { "id": "dy_fashion", "name": "穿搭日记aya", "domain": "时尚穿搭", "fans": 198000, "gain": { "1d": 22000, "3d": 47000, "7d": 88000 } }
   ]
 }

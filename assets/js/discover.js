@@ -1,14 +1,16 @@
 // ============================================================
-// discover.js — 挖掘热点（筛选器真实联动 + 示例榜单 + 占位徽标）
+// discover.js — 挖掘热点（筛选器全维度真实联动 + 示例榜单）
+// 领域 / 类型(博主·内容) / 子类(视频·图文) / 维度 / 时间 全部真实过滤排序
 // ============================================================
 import { mountShell } from './shell.js';
 import { getRank, getCategories } from './api.js';
-import { fmtNum, esc, serializeCondition } from './format.js';
-import { filter as filterStore } from './store.js';
-import { basket } from './store.js';
+import { fmtNum, fmtDuration, esc, serializeCondition } from './format.js';
+import { filter as filterStore, basket } from './store.js';
 
 let f = filterStore.get();
 let rankData = null;
+
+const METRIC_LABEL = { like: '点赞量', view: '浏览量', collect: '收藏量', fans: '涨粉量' };
 
 const CONTENT = `
 <div class="page-head">
@@ -16,7 +18,7 @@ const CONTENT = `
   <p>通过数据排名发现热门博主与内容，快速判断「现在什么值得看、值得拆」</p>
 </div>
 
-<div class="coming-banner">📊 抖音排行榜采集（热榜 / 聚合）为后续版本，当前为<strong>&nbsp;示例数据&nbsp;</strong>用于演示交互；筛选联动已真实生效</div>
+<div class="coming-banner">📊 抖音排行榜采集（热榜 / 聚合）为后续版本，当前为<strong>&nbsp;示例数据&nbsp;</strong>；筛选联动（领域/类型/维度/时间）已全部真实生效</div>
 
 <div class="card pad mb-4">
   <div class="filterbar">
@@ -60,36 +62,44 @@ const CONTENT = `
 
 <div class="card" id="rank-wrap"></div>`;
 
+// 领域匹配（与爆款拆解一致：官方垂类 ↔ 博主/内容 domain 双向包含）
+function inDomain(domainStr, pick) {
+  if (!pick) return true;
+  const main = (domainStr || '').split(/[\/·、,，]/)[0].trim();
+  return domainStr.includes(pick) || pick.includes(main) || main.includes(pick);
+}
+
 async function init() {
   mountShell(CONTENT);
-  // 领域下拉：抖音官方向内容垂类词表
   const cats = (await getCategories()).primary || [];
   const sel = document.getElementById('domain-sel');
   sel.innerHTML = '<option value="">选择领域…</option>' +
     cats.map(d => `<option value="${d}" ${f.domain === d ? 'selected' : ''}>${d}</option>`).join('');
-  syncSegments();
+
   document.querySelectorAll('.segment[data-f]').forEach(seg => {
     seg.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      const key = seg.dataset.f;
-      f[key] = b.dataset.v;
-      applyLinkage(key);
+      f[seg.dataset.f] = b.dataset.v;
+      applyLinkage(seg.dataset.f);
       syncSegments();
       refresh();
     });
   });
-  document.getElementById('domain-sel').addEventListener('change', e => { f.domain = e.target.value; refresh(); });
+  sel.addEventListener('change', e => { f.domain = e.target.value; filterStore.set(f); refresh(); });
+
+  syncSegments();
   rankData = await getRank(f);
   refresh();
 }
 
-// 联动规则
+// 联动规则：博主↔涨粉；内容↔点赞/浏览/收藏
 function applyLinkage(changedKey) {
   if (changedKey === 'type') {
     if (f.type === 'blogger') f.metric = 'fans';
     else if (f.metric === 'fans') f.metric = 'like';
   }
   if (changedKey === 'metric' && f.metric === 'fans') f.type = 'blogger';
+  if (changedKey === 'metric' && f.metric !== 'fans' && f.type === 'blogger') f.type = 'content';
   filterStore.set(f);
 }
 
@@ -103,43 +113,68 @@ function syncSegments() {
   document.getElementById('cond').textContent = serializeCondition(f);
 }
 
+// 取排序值：内容=metrics[metric][range]；博主=gain[range]
+function contentVal(item) { return (item.metrics?.[f.metric]?.[f.range]) ?? 0; }
+function bloggerVal(item) { return (item.gain?.[f.range]) ?? 0; }
+
 function refresh() {
   const wrap = document.getElementById('rank-wrap');
-  const rows = f.type === 'blogger' ? rankData.blogger : rankData.content;
+  let rows, isBlogger = f.type === 'blogger';
+
+  if (isBlogger) {
+    rows = rankData.blogger
+      .filter(b => f.scope !== 'domain' || inDomain(b.domain, f.domain))
+      .map(b => ({ ...b, _val: bloggerVal(b) }))
+      .sort((a, b) => b._val - a._val);
+  } else {
+    rows = rankData.content
+      .filter(c => c.type === f.subtype)                                   // 视频 / 图文
+      .filter(c => f.scope !== 'domain' || inDomain(c.domain, f.domain))   // 领域
+      .map(c => ({ ...c, _val: contentVal(c) }))
+      .sort((a, b) => b._val - a._val);
+  }
+  rows.forEach((r, i) => r.rank = i + 1);
+
   document.getElementById('count-hint').textContent = `共 ${rows.length} 条 · 示例`;
   if (!rows.length) {
-    wrap.innerHTML = `<div class="state"><div class="ico">📭</div><div class="msg">该条件下暂无排名，试试更换时间范围或方向/领域</div></div>`;
+    wrap.innerHTML = `<div class="state"><div class="ico">📭</div><div class="msg">该条件下暂无排名，试试更换时间范围、方向/领域或类型</div></div>`;
     return;
   }
-  wrap.innerHTML = f.type === 'blogger' ? bloggerTable(rows) : contentTable(rows);
+  wrap.innerHTML = isBlogger ? bloggerTable(rows) : contentTable(rows);
   wireJump(wrap, rows);
 }
 
+function rankCell(n) { return `<td class="rank-num ${n <= 3 ? 'top' + n : ''}">${n}</td>`; }
+
 function contentTable(rows) {
+  const mLabel = METRIC_LABEL[f.metric];
   return `<table class="rank-table">
-    <thead><tr><th>#</th><th>内容</th><th>博主</th><th>类型</th><th>数据</th><th>发布</th><th></th></tr></thead>
+    <thead><tr><th>#</th><th>内容</th><th>博主</th><th>类型</th><th>${mLabel}</th><th>发布</th><th></th></tr></thead>
     <tbody>${rows.map(r => `
       <tr data-id="${r.id}">
-        <td class="rank-num top${r.rank}">${r.rank}</td>
-        <td><div style="max-width:280px;font-weight:600">${esc(r.title)} <span class="badge mock">示例</span></div></td>
-        <td>@${esc(r.author)}</td>
-        <td>${r.type === 'image' ? `图文·${r.images}图` : '视频·' + Math.floor((r.duration||0)/60) + '分'}</td>
-        <td><b>${fmtNum(r.value)}</b></td>
+        ${rankCell(r.rank)}
+        <td><div style="max-width:300px;font-weight:600">${esc(r.title)}</div></td>
+        <td class="small">@${esc(r.author)}</td>
+        <td class="small muted">${r.type === 'image' ? `图文 · ${r.images}图 · ${r.words}字` : `视频 · ${fmtDuration(r.duration)}`}</td>
+        <td><b>${fmtNum(r._val)}</b></td>
         <td class="small muted">${esc(r.publishedAt)}</td>
-        <td><button class="btn sm primary" data-act="breakdown">拆解</button></td>
+        <td class="row gap">
+          <button class="btn sm primary" data-act="breakdown">拆解</button>
+          <button class="btn sm" data-act="compare-c">加入对比</button>
+        </td>
       </tr>`).join('')}</tbody></table>`;
 }
 
 function bloggerTable(rows) {
   return `<table class="rank-table">
-    <thead><tr><th>#</th><th>博主</th><th>领域</th><th>粉丝</th><th>涨粉</th><th></th></tr></thead>
+    <thead><tr><th>#</th><th>博主</th><th>领域</th><th>粉丝</th><th>涨粉（${{ '1d': '一天', '3d': '三天', '7d': '一周' }[f.range]}）</th><th></th></tr></thead>
     <tbody>${rows.map(r => `
       <tr data-id="${r.id}">
-        <td class="rank-num top${r.rank}">${r.rank}</td>
-        <td><b>${esc(r.name)}</b> <span class="badge mock">示例</span></td>
-        <td>${esc(r.domain)}</td>
+        ${rankCell(r.rank)}
+        <td><b>${esc(r.name)}</b></td>
+        <td class="small">${esc(r.domain)}</td>
         <td>${fmtNum(r.fans)}</td>
-        <td><b class="up" style="color:var(--up)">+${fmtNum(r.value)}</b></td>
+        <td><b style="color:var(--up)">+${fmtNum(r._val)}</b></td>
         <td class="row gap">
           <button class="btn sm primary" data-act="breakdown">拆解</button>
           <button class="btn sm" data-act="compare">加入对比</button>
@@ -156,6 +191,10 @@ function wireJump(scope, rows) {
     });
     tr.querySelector('[data-act="compare"]')?.addEventListener('click', e => {
       const ok = basket.add({ id, type: 'blogger', name: r.name, domain: r.domain, fans: r.fans });
+      e.target.textContent = ok ? '✓ 已加入' : '已在篮中'; e.target.disabled = true;
+    });
+    tr.querySelector('[data-act="compare-c"]')?.addEventListener('click', e => {
+      const ok = basket.add({ id, type: 'blogger', name: r.author, domain: r.domain, fans: null, fromContent: r.id });
       e.target.textContent = ok ? '✓ 已加入' : '已在篮中'; e.target.disabled = true;
     });
   });
