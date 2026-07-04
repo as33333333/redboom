@@ -1,0 +1,51 @@
+{
+  "bloggers": [
+    {
+      "id": "dy_homelife",
+      "name": "小居家的日常",
+      "avatar": "",
+      "fans": 486000,
+      "domain": "家居 / 好物分享",
+      "verified": "个人认证：家居领域创作者",
+      "bio": "分享租房改造 & 好物｜合作 vx: homelife2024｜橱窗有同款",
+      "tags": ["好物分享", "家居", "租房改造"],
+      "recentView": 1280000,
+      "contents": [
+        { "id": "c1", "type": "video", "title": "60平米出租屋爆改，花了不到3000块", "cover": "", "author": "小居家的日常", "publishedAt": "2026-06-28", "view": 862000, "like": 98000, "collect": 45000, "duration": 214, "url": "https://www.douyin.com/video/c1" },
+        { "id": "c2", "type": "video", "title": "10个租房必买好物，第3个我用了两年", "cover": "", "author": "小居家的日常", "publishedAt": "2026-06-20", "view": 523000, "like": 61000, "collect": 38000, "duration": 178, "url": "https://www.douyin.com/video/c2" },
+        { "id": "c3", "type": "image", "title": "厨房收纳｜9张图看懂小厨房怎么装", "cover": "", "author": "小居家的日常", "publishedAt": "2026-06-12", "view": 210000, "like": 24000, "collect": 19000, "images": 9, "url": "https://www.douyin.com/note/c3" },
+        { "id": "c4", "type": "video", "title": "宜家新品测评，这几件真的别买", "cover": "", "author": "小居家的日常", "publishedAt": "2026-06-05", "view": 95000, "like": 8600, "collect": 4200, "duration": 320, "url": "https://www.douyin.com/video/c4" },
+        { "id": "c5", "type": "video", "title": "阳台改造成办公区，成本清单公开", "cover": "", "author": "小居家的日常", "publishedAt": "2026-05-30", "view": 320, "like": 41, "collect": 12, "duration": 96, "url": "https://www.douyin.com/video/c5" }
+      ]
+    },
+    {
+      "id": "dy_foodie",
+      "name": "深夜下饭菜",
+      "avatar": "",
+      "fans": 1230000,
+      "domain": "美食 / 家常菜",
+      "verified": "个人认证：美食领域创作者",
+      "bio": "每天一道下饭菜｜菜谱在评论区｜商务合作找经纪人",
+      "tags": ["美食教程", "家常菜"],
+      "recentView": 4200000,
+      "contents": [
+        { "id": "f1", "type": "video", "title": "3分钟搞定的隔夜饭神器，打工人必学", "cover": "", "author": "深夜下饭菜", "publishedAt": "2026-07-01", "view": 1560000, "like": 210000, "collect": 132000, "duration": 186, "url": "https://www.douyin.com/video/f1" },
+        { "id": "f2", "type": "video", "title": "红烧肉不用焯水，这样做入口即化", "cover": "", "author": "深夜下饭菜", "publishedAt": "2026-06-24", "view": 890000, "like": 120000, "collect": 98000, "duration": 240, "url": "https://www.douyin.com/video/f2" }
+      ]
+    },
+    {
+      "id": "dy_fitness",
+      "name": "阿May练不动",
+      "avatar": "",
+      "fans": 268000,
+      "domain": "健身 / 居家训练",
+      "verified": "",
+      "bio": "居家减脂｜课程私信｜付费社群招募中",
+      "tags": ["健身教程", "减脂"],
+      "recentView": 640000,
+      "contents": [
+        { "id": "g1", "type": "video", "title": "跟练14天，肉眼可见瘦一圈", "cover": "", "author": "阿May练不动", "publishedAt": "2026-06-30", "view": 430000, "like": 52000, "collect": 61000, "duration": 720, "url": "https://www.douyin.com/video/g1" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  # 抖音数据服务（GitHub skill）—— 首次使用请按官方文档配置 Cookie/风控
+  # 参考：https://github.com/Evil0ctal/Douyin_TikTok_Download_API
+  douyin-api:
+    image: evil0ctal/douyin_tiktok_download_api:latest
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+  # 应用后端（本项目）
+  app:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DOUYIN_API_BASE=http://douyin-api:80   # 留空则走 mock
+      - LLM_API_KEY=${LLM_API_KEY:-}            # 留空则分析走 mock
+      - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com}
+      - LLM_MODEL=${LLM_MODEL:-deepseek-chat}
+    volumes:
+      - ./:/app/site:ro
+    depends_on:
+      - douyin-api

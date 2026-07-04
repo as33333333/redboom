@@ -1,0 +1,15 @@
+{
+  "note": "示例数据 · 抖音排行榜采集（热榜/聚合）为后续版本，当前用于演示 UI",
+  "content": [
+    { "rank": 1, "id": "f1", "type": "video", "title": "3分钟搞定的隔夜饭神器，打工人必学", "author": "深夜下饭菜", "domain": "美食", "value": 210000, "metric": "like", "duration": 186, "publishedAt": "2026-07-01" },
+    { "rank": 2, "id": "c1", "type": "video", "title": "60平米出租屋爆改，花了不到3000块", "author": "小居家的日常", "domain": "家居", "value": 98000, "metric": "like", "duration": 214, "publishedAt": "2026-06-28" },
+    { "rank": 3, "id": "g1", "type": "video", "title": "跟练14天，肉眼可见瘦一圈", "author": "阿May练不动", "domain": "健身", "value": 52000, "metric": "like", "duration": 720, "publishedAt": "2026-06-30" },
+    { "rank": 4, "id": "f2", "type": "video", "title": "红烧肉不用焯水，这样做入口即化", "author": "深夜下饭菜", "domain": "美食", "value": 120000, "metric": "like", "duration": 240, "publishedAt": "2026-06-24" },
+    { "rank": 5, "id": "c3", "type": "image", "title": "厨房收纳｜9张图看懂小厨房怎么装", "author": "小居家的日常", "domain": "家居", "value": 24000, "metric": "like", "images": 9, "publishedAt": "2026-06-12" }
+  ],
+  "blogger": [
+    { "rank": 1, "id": "dy_foodie", "name": "深夜下饭菜", "domain": "美食", "fans": 1230000, "value": 82000, "metric": "fans" },
+    { "rank": 2, "id": "dy_homelife", "name": "小居家的日常", "domain": "家居", "fans": 486000, "value": 31000, "metric": "fans" },
+    { "rank": 3, "id": "dy_fitness", "name": "阿May练不动", "domain": "健身", "fans": 268000, "value": 12000, "metric": "fans" }
+  ]
+}

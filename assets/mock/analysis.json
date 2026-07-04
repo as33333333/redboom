@@ -1,0 +1,47 @@
+{
+  "dy_homelife": {
+    "targetType": "blogger",
+    "object": { "id": "dy_homelife", "name": "小居家的日常", "domain": "家居 / 好物分享", "fans": 486000 },
+    "data": {
+      "fans": 486000,
+      "view":    { "max": { "value": 862000, "title": "60平米出租屋爆改，花了不到3000块", "url": "https://www.douyin.com/video/c1" }, "min": { "value": 320, "title": "阳台改造成办公区，成本清单公开", "url": "https://www.douyin.com/video/c5" }, "avg": 338064 },
+      "like":    { "max": { "value": 98000, "title": "60平米出租屋爆改，花了不到3000块", "url": "https://www.douyin.com/video/c1" }, "min": { "value": 41, "title": "阳台改造成办公区，成本清单公开", "url": "https://www.douyin.com/video/c5" }, "avg": 38448 },
+      "collect": { "max": { "value": 45000, "title": "60平米出租屋爆改，花了不到3000块", "url": "https://www.douyin.com/video/c1" }, "min": { "value": 12, "title": "阳台改造成办公区，成本清单公开", "url": "https://www.douyin.com/video/c5" }, "avg": 21282 }
+    },
+    "content": {
+      "positioning": { "tags": ["好物分享", "家居", "租房改造"], "critiqueBlogger": "家居带货博主", "critiqueContent": "家居好物种草", "confidence": "high" },
+      "publishType": "以视频为主，图文为辅",
+      "titlePattern": { "summary": "多用「数字+痛点+结果」结构，制造省钱/实用预期", "sample": "60平米出租屋爆改，花了不到3000块", "psychology": "数字锚定（3000块）降低决策门槛，痛点（出租屋）引发身份代入" },
+      "contentRule": { "theme": "面向租房/小户型人群的低成本改造与好物推荐", "tags": ["租房改造", "收纳", "平价好物"], "keywords": ["爆改", "平价", "收纳", "出租屋"], "targetUser": "一二线城市租房青年、预算有限的家居新手", "coreNeed": "用低成本提升居住体验，降低试错成本", "extra": "视频平均时长约 3 分钟" },
+      "advantage": { "text": "经历真实、成本清单透明，参考性强；结合「出租屋」高共鸣场景，话题性足", "quote": "花了不到3000块" , "confidence": "high" },
+      "attraction": {
+        "whyAttract": "精准戳中「租房党想改善居住但怕花钱」的核心焦虑，用可复制的低成本方案给出确定性回报，观众看完即产生「我也能做到」的行动欲",
+        "hook": "封面数字「3000块爆改」+ 前3秒改造前后对比",
+        "strengthCarrier": "选题 + 封面 + 前3秒钩子",
+        "strengthDetail": "标题用具体数字降低预期门槛；封面强烈前后对比制造视觉冲突；开头直接抛结果、省略铺垫，完播率高。不是单点好，而是「选题共鸣 × 封面冲突 × 开头留人」协同",
+        "strengthQuote": "60平米出租屋爆改，花了不到3000块",
+        "metricReasons": [
+          { "metric": "高浏览", "why": "封面前后对比 + 数字标题带来高点击率，叠加「出租屋」大众化题材，初始推荐池转化率高" },
+          { "metric": "高点赞", "why": "改造结果超出「3000块」的心理预期，情绪落差带来点赞冲动" },
+          { "metric": "高收藏", "why": "含成本清单与具体做法，属于「以后要用」的工具型内容，收藏率显著高于点赞率" }
+        ]
+      },
+      "weakness": { "text": "部分测评类内容结论偏主观，评论区高频希望给出「具体品牌与链接」", "commentHint": "高频建议：希望补充购买链接与尺寸参数", "confidence": "medium" },
+      "trend": { "note": "家居好物赛道近90天热度平稳上行，参与博主约 1.2 万", "series": [42, 45, 44, 50, 58, 63, 61, 68, 72], "placeholder": true }
+    },
+    "monetize": {
+      "evidence": [
+        { "source": "简介", "quote": "合作 vx: homelife2024", "signal": "引流微信" },
+        { "source": "橱窗", "quote": "主页橱窗含同款商品", "signal": "橱窗带货" },
+        { "source": "内容关联商品", "quote": "多条视频挂载家居好物小黄车", "signal": "橱窗带货" },
+        { "source": "品牌露出", "quote": "历史视频出现宜家、家电品牌镜头", "signal": "商业合作" },
+        { "source": "账号认证", "quote": "个人认证：家居领域创作者", "signal": "商业合作" }
+      ],
+      "tags": [
+        { "name": "引流微信", "icon": "💬", "detail": "简介留有微信号，疑似导流私域（卖课/社群未确认）", "confidence": "low" },
+        { "name": "橱窗带货", "icon": "🛒", "detail": "橱窗 + 视频挂车，销售量/销售均价待接入橱窗数据", "confidence": "medium" },
+        { "name": "商业合作", "icon": "🤝", "detail": "家居 / 家电品牌（历史露出，具体合作待评论采集确认）", "confidence": "low" }
+      ]
+    }
+  }
+}

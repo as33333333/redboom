@@ -1,0 +1,23 @@
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Python / backend ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+backend/cache.db
+
+# ---- Env / secrets ----
+.env
+*.local
+
+# ---- Editor ----
+.vscode/
+.idea/
+
+# ---- Temp / test artifacts ----
+_t.html
+*.log
