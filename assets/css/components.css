@@ -59,6 +59,26 @@
   font-size: 11px; font-weight: 700; display: grid; place-items: center;
 }
 
+/* 对比篮弹窗 */
+.basket-wrap { position: relative; }
+.basket-pop {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  width: 320px; max-height: 70vh; overflow: auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-lg); z-index: 50;
+}
+.basket-pop-head { padding: 12px 14px; border-bottom: 1px solid var(--border); font-weight: 700; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.basket-pop-list { padding: 6px; }
+.basket-pop-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--r-md); }
+.basket-pop-item:hover { background: var(--surface-2); }
+.basket-pop-foot { display: flex; justify-content: space-between; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
+
+/* 对比分析：选择卡 */
+.pick-card { position: relative; display: flex; align-items: center; gap: 10px; padding: 12px; border: 1.5px solid var(--border); border-radius: var(--r-md); background: var(--surface); cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.pick-card:hover { border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+.pick-card.on { border-color: var(--brand); background: var(--brand-50); }
+.pick-card .pick-badge { position: absolute; top: -8px; left: -8px; width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; box-shadow: var(--shadow-sm); }
+
 /* ---- 内容卡 / 博主行 ---- */
 .content-card {
   display: flex; gap: var(--sp-3); padding: var(--sp-3);

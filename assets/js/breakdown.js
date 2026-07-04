@@ -41,7 +41,6 @@ const CONTENT = `
       <div class="segment" id="entry-seg">
         <button data-e="video" class="active">爆款视频</button>
         <button data-e="blogger">顶流博主</button>
-        <button data-e="single">拆解视频</button>
       </div>
       <div class="search" style="max-width:280px;border:1px solid var(--border)">
         <span>🔍</span><input id="blogger-search" placeholder="搜索博主 / 领域" />
@@ -82,10 +81,8 @@ async function init() {
 // ---- 左侧入口切换 ----
 function renderEntry(kind) {
   currentBlogger = null;
-  if (kind === 'video') renderVideoRank();
-  else if (kind === 'blogger') renderBloggerLib('');
-  else document.getElementById('left-panel').innerHTML =
-    stateBox({ ico: '🎬', msg: '从「爆款视频」列表点击某条内容的「拆解」，或粘贴作品链接到顶部搜索框' });
+  if (kind === 'blogger') renderBloggerLib('');
+  else renderVideoRank();
 }
 
 // 领域 + 维度 工具条
