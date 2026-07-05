@@ -18,6 +18,11 @@ backend/cache.db
 .vscode/
 .idea/
 
+# ---- Local assistant/tooling state ----
+.agents/
+.bigapple/
+.claude/
+
 # ---- Temp / test artifacts ----
 _t.html
 *.log
