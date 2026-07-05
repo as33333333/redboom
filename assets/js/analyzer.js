@@ -45,7 +45,7 @@ export function renderAnalyzer(mountEl) {
   });
   mountEl.querySelector('#az-compare').addEventListener('click', () => {
     if (!current.target) return;
-    const ok = basket.add({ id: current.target.id, type: current.target.type, name: current.target.name, domain: current.target.domain, fans: current.target.fans });
+    const ok = basket.add({ ...current.target });
     const btn = mountEl.querySelector('#az-compare'); btn.textContent = ok ? '✓ 已加入对比篮' : '已在对比篮中';
     setTimeout(() => btn.textContent = '加入对比', 1500);
   });
