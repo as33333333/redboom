@@ -20,14 +20,20 @@ function write(key, val) {
 }
 
 // ---- 对比篮 ----
+// 两类对象：博主 type:'blogger'（name/domain/fans/avatar）；视频 type:'content'（title/cover/view/like/collect/vtype/duration/images/author）
 export const basket = {
   all: () => read(K.basket, []),
+  ofType: (t) => read(K.basket, []).filter(x => (x.type === 'content' ? 'content' : 'blogger') === t),
   count: () => read(K.basket, []).length,
   has: (id) => read(K.basket, []).some(x => x.id === id),
   add(item) {
     const list = read(K.basket, []);
     if (list.some(x => x.id === item.id)) return false;
-    list.push({ id: item.id, type: item.type, name: item.name, avatar: item.avatar, domain: item.domain, fans: item.fans });
+    const f = ['id', 'type', 'name', 'title', 'cover', 'avatar', 'domain', 'fans',
+      'author', 'view', 'like', 'collect', 'vtype', 'duration', 'images'];
+    const rec = {};
+    f.forEach(k => { if (item[k] !== undefined) rec[k] = item[k]; });
+    list.push(rec);
     write(K.basket, list);
     return true;
   },

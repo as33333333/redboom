@@ -213,9 +213,12 @@ async function analyzeBlogger(b) {
 async function analyzeContent(cid) {
   const owner = bloggers.find(b => b.contents.some(c => c.id === cid));
   const c = owner?.contents.find(x => x.id === cid) || { id: cid, title: '单个作品' };
-  setLoading({ id: cid, type: 'content', name: c.title, domain: owner?.domain });
+  const target = { id: cid, type: 'content', name: c.title, title: c.title, cover: c.cover || '',
+    author: owner?.name, domain: owner?.domain, view: c.view, like: c.like, collect: c.collect,
+    vtype: c.type, duration: c.duration, images: c.images };
+  setLoading(target);
   const data = await analyze('content', cid);
-  setSuccess({ id: cid, type: 'content', name: c.title, domain: owner?.domain }, data);
+  setSuccess(target, data);
   hookTrend(data);
 }
 
@@ -242,10 +245,20 @@ function wireContentActions(scope) {
     });
     card.querySelector('[data-act="compare"]')?.addEventListener('click', e => {
       const c = findContent(id);
-      const ok = basket.add({ id, type: 'content', name: c?.title, domain: '' });
+      const ok = basket.add(videoRec(c));
       markAdded(e.target, ok);
     });
   });
+}
+
+// 视频 → 篮子记录（封面+标题+数据）
+function videoRec(c) {
+  if (!c) return { id: '', type: 'content' };
+  return {
+    id: c.id, type: 'content', title: c.title, name: c.title, cover: c.cover || '',
+    author: c.author, domain: c.domain || '', view: c.view, like: c.like, collect: c.collect,
+    vtype: c.type, duration: c.duration, images: c.images,
+  };
 }
 
 function addCompare(id, btn) {
@@ -255,7 +268,7 @@ function addCompare(id, btn) {
 }
 function markAdded(btn, ok) { btn.textContent = ok ? '✓ 已加入' : '已在篮中'; btn.disabled = true; }
 function findContent(id) {
-  for (const b of bloggers) { const c = b.contents.find(x => x.id === id); if (c) return { ...c, author: b.name }; }
+  for (const b of bloggers) { const c = b.contents.find(x => x.id === id); if (c) return { ...c, author: b.name, domain: b.domain }; }
   return null;
 }
 

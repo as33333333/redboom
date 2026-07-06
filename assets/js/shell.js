@@ -84,34 +84,43 @@ function togglePop() {
   if (p.style.display === 'none') { renderPop(); p.style.display = 'block'; } else { closePop(); }
 }
 
+let popDim = 'content';   // 弹窗当前维度：content(内容) | blogger(博主)
+
 function renderPop() {
   const p = document.getElementById('basket-pop');
-  const items = basket.all();
-  if (!items.length) {
+  const all = basket.all();
+  if (!all.length) {
     p.innerHTML = `
       <div class="basket-pop-head">对比篮</div>
       <div class="state" style="padding:24px 16px"><div class="ico">🧺</div>
         <div class="msg small">还没有加入任何对比对象<br>去「爆款拆解」或「挖掘热点」点「加入对比」</div></div>`;
     return;
   }
+  const contents = basket.ofType('content');
+  const bloggers = basket.ofType('blogger');
+  // 默认维度选有内容的那一类
+  if (popDim === 'content' && !contents.length && bloggers.length) popDim = 'blogger';
+  if (popDim === 'blogger' && !bloggers.length && contents.length) popDim = 'content';
+  const list = popDim === 'content' ? contents : bloggers;
+
   p.innerHTML = `
-    <div class="basket-pop-head">对比篮（${items.length}）<span class="muted small" style="font-weight:400">对比时任选 2 个</span></div>
+    <div class="basket-pop-head">对比篮（${all.length}）<span class="muted small" style="font-weight:400">同类型任选 2 个对比</span></div>
+    <div class="segment" style="margin:8px 10px 4px">
+      <button data-dim="content" class="${popDim === 'content' ? 'active' : ''}">🎬 内容 ${contents.length}</button>
+      <button data-dim="blogger" class="${popDim === 'blogger' ? 'active' : ''}">👤 博主 ${bloggers.length}</button>
+    </div>
     <div class="basket-pop-list">
-      ${items.map(it => `
-        <div class="basket-pop-item" data-id="${esc(it.id)}">
-          <div class="avatar" style="width:34px;height:34px;flex:0 0 34px;font-size:13px">${esc((it.name || '?')[0])}</div>
-          <div style="flex:1;min-width:0">
-            <div class="name" style="font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(it.name)}</div>
-            <div class="muted small">${it.type === 'content' ? '内容' : '博主'}${it.domain ? ' · ' + esc(it.domain) : ''}${it.fans != null ? ' · ' + fmtNum(it.fans) + '粉' : ''}</div>
-          </div>
-          <button class="btn ghost sm" data-act="del" title="移除">✕</button>
-        </div>`).join('')}
+      ${list.length ? list.map(it => it.type === 'content' ? videoItem(it) : bloggerItem(it)).join('')
+        : `<div class="muted small" style="padding:16px;text-align:center">该类型暂无对象</div>`}
     </div>
     <div class="basket-pop-foot">
       <button class="btn ghost sm" data-act="clear">清空</button>
-      <a class="btn primary sm" href="compare.html" data-act="quick">⚡ 快速对比</a>
+      <a class="btn primary sm" href="compare.html?dim=${popDim}" data-act="quick">⚡ 快速对比</a>
     </div>`;
 
+  p.querySelectorAll('[data-dim]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation(); popDim = b.dataset.dim; renderPop();
+  }));
   p.querySelectorAll('[data-act="del"]').forEach(b => b.addEventListener('click', e => {
     e.stopPropagation();
     basket.remove(e.target.closest('[data-id]').dataset.id);
@@ -120,6 +129,29 @@ function renderPop() {
   p.querySelector('[data-act="clear"]')?.addEventListener('click', e => {
     e.stopPropagation(); basket.clear(); renderPop();
   });
+}
+
+function videoItem(it) {
+  return `
+    <div class="basket-pop-item" data-id="${esc(it.id)}">
+      <div class="pop-thumb">${it.cover ? `<img src="${esc(it.cover)}" onerror="this.replaceWith(document.createTextNode('🎬'))">` : '🎬'}</div>
+      <div style="flex:1;min-width:0">
+        <div class="name" style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title || it.name)}</div>
+        <div class="type-line"><span class="type-chip">内容</span><span class="muted small">${it.author ? '@' + esc(it.author) + ' · ' : ''}${it.view != null ? fmtNum(it.view) + '播放' : '内容样本'}</span></div>
+      </div>
+      <button class="btn ghost sm" data-act="del" title="移除">✕</button>
+    </div>`;
+}
+function bloggerItem(it) {
+  return `
+    <div class="basket-pop-item" data-id="${esc(it.id)}">
+      <div class="avatar" style="width:34px;height:34px;flex:0 0 34px;font-size:13px">${esc((it.name || '?')[0])}</div>
+      <div style="flex:1;min-width:0">
+        <div class="name" style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.name)}</div>
+        <div class="type-line"><span class="type-chip">博主</span><span class="muted small">${it.domain ? esc(it.domain) : '账号样本'}${it.fans != null ? ' · ' + fmtNum(it.fans) + '粉' : ''}</span></div>
+      </div>
+      <button class="btn ghost sm" data-act="del" title="移除">✕</button>
+    </div>`;
 }
 
 function refreshBasket() {

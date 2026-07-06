@@ -194,7 +194,12 @@ function wireJump(scope, rows) {
       e.target.textContent = ok ? '✓ 已加入' : '已在篮中'; e.target.disabled = true;
     });
     tr.querySelector('[data-act="compare-c"]')?.addEventListener('click', e => {
-      const ok = basket.add({ id, type: 'blogger', name: r.author, domain: r.domain, fans: null, fromContent: r.id });
+      const ok = basket.add({
+        id: r.id, type: 'content', title: r.title, name: r.title, cover: r.cover || '',
+        author: r.author, domain: r.domain,
+        view: r.metrics?.view?.['7d'], like: r.metrics?.like?.['7d'], collect: r.metrics?.collect?.['7d'],
+        vtype: r.type, duration: r.duration, images: r.images,
+      });
       e.target.textContent = ok ? '✓ 已加入' : '已在篮中'; e.target.disabled = true;
     });
   });
