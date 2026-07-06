@@ -1,12 +1,12 @@
 // ============================================================
-// compare.js — 对比分析（分维度：博主 / 视频；同类任选 2 个 → 对比）
-// 维度不可混评：博主只和博主比，视频只和视频比
+// compare.js — 对比分析（分维度：博主 / 内容；同类任选 2 个 → 对比）
+// 维度不可混评：博主只和博主比，内容只和内容比
 // ============================================================
 import { mountShell } from './shell.js';
 import { fmtNum, fmtDuration, esc, getQuery } from './format.js';
 import { basket, saved, onStoreChange } from './store.js';
 
-let dim = 'content';   // 当前维度：content(视频) | blogger(博主)
+let dim = 'content';   // 当前维度：content(内容) | blogger(博主)
 let selected = [];     // 选中的 id（同维度，最多 2）
 
 // ---- 博主画像（按领域给特征，让建议贴合） ----
@@ -46,11 +46,11 @@ const CONTENT = `
 
 <div class="card pad mb-4">
   <div class="row between mb-3" style="flex-wrap:wrap;gap:10px">
-    <div class="card-title">① 选择维度 & 2 个对象 <span class="muted small" id="sel-hint"></span></div>
+    <div class="card-title">① 选择分类 & 2 个同类对象 <span class="muted small" id="sel-hint"></span></div>
     <button class="btn primary sm" id="go-compare" disabled>确定，开始对比</button>
   </div>
   <div class="segment mb-3" id="dim-tabs">
-    <button data-dim="content">🎬 视频对比</button>
+    <button data-dim="content">🎬 内容对比</button>
     <button data-dim="blogger">👤 博主对比</button>
   </div>
   <div id="pick-list"></div>
@@ -90,10 +90,10 @@ function renderPickList() {
   updateHint();
 
   if (!list.length) {
-    const other = dim === 'content' ? '博主' : '视频';
+    const other = dim === 'content' ? '博主' : '内容';
     wrap.innerHTML = `<div class="state" style="padding:26px"><div class="ico">${dim === 'content' ? '🎬' : '👤'}</div>
-      <div class="msg">对比篮里还没有${dim === 'content' ? '视频' : '博主'}。<br>
-      去<a href="index.html" style="color:var(--brand-600)">爆款拆解</a>或<a href="discover.html" style="color:var(--brand-600)">挖掘热点</a>，在${dim === 'content' ? '视频' : '博主'}处点「加入对比」<br>
+      <div class="msg">对比篮里还没有${dim === 'content' ? '内容' : '博主'}。<br>
+      去<a href="index.html" style="color:var(--brand-600)">爆款拆解</a>或<a href="discover.html" style="color:var(--brand-600)">挖掘热点</a>，在${dim === 'content' ? '内容' : '博主'}处点「加入对比」<br>
       <span class="small muted">（也可切到上方「${other}对比」）</span></div></div>`;
     document.getElementById('result').innerHTML = '';
     return;
@@ -101,7 +101,11 @@ function renderPickList() {
   wrap.innerHTML = `<div class="grid grid-2">${list.map(it => pickCard(it)).join('')}</div>`;
   wrap.querySelectorAll('.pick-card').forEach(card => {
     card.addEventListener('click', e => {
-      if (e.target.closest('[data-act="del"]')) return;
+      if (e.target.closest('button')) return;
+      toggleSelect(card.dataset.id);
+    });
+    card.querySelector('[data-act="select"]').addEventListener('click', e => {
+      e.stopPropagation();
       toggleSelect(card.dataset.id);
     });
     card.querySelector('[data-act="del"]').addEventListener('click', e => {
@@ -118,16 +122,21 @@ function pickCard(it) {
     ? `<div class="pop-thumb" style="width:52px;height:40px;flex:0 0 52px">${it.cover ? `<img src="${esc(it.cover)}" onerror="this.replaceWith(document.createTextNode('🎬'))">` : '🎬'}</div>`
     : `<div class="avatar">${esc((it.name || '?')[0])}</div>`;
   const sub = it.type === 'content'
-    ? `视频${it.author ? ' · @' + esc(it.author) : ''}${it.view != null ? ' · ' + fmtNum(it.view) + '播放' : ''}`
-    : `博主${it.domain ? ' · ' + esc(it.domain) : ''}${it.fans != null ? ' · 粉丝 ' + fmtNum(it.fans) : ''}`;
+    ? `${it.author ? '@' + esc(it.author) + ' · ' : ''}${it.view != null ? fmtNum(it.view) + '播放' : '内容样本'}`
+    : `${it.domain ? esc(it.domain) : '账号样本'}${it.fans != null ? ' · 粉丝 ' + fmtNum(it.fans) : ''}`;
+  const typeLabel = it.type === 'content' ? '内容' : '博主';
+  const selectText = on ? '已选中' : (selected.length >= 2 ? '最多 2 个' : '选择');
   return `
     <div class="pick-card ${on ? 'on' : ''}" data-id="${esc(it.id)}">
       ${badge}${thumb}
       <div style="flex:1;min-width:0">
         <div class="name" style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(nameOf(it))}</div>
-        <div class="muted small">${sub}</div>
+        <div class="type-line"><span class="type-chip">${typeLabel}</span><span class="muted small">${sub}</span></div>
       </div>
-      <button class="btn ghost sm" data-act="del" title="从对比篮移除">✕</button>
+      <div class="pick-actions">
+        <button class="btn sm ${on ? 'primary' : ''}" data-act="select">${selectText}</button>
+        <button class="btn ghost sm" data-act="del" title="从对比篮移除">✕</button>
+      </div>
     </div>`;
 }
 
@@ -144,7 +153,7 @@ function updateHint() {
   const go = document.getElementById('go-compare');
   const hint = document.getElementById('sel-hint');
   if (go) go.disabled = selected.length !== 2;
-  if (hint) hint.textContent = `已选 ${selected.length}/2`;
+  if (hint) hint.textContent = `已选 ${selected.length}/2 · 只能选择当前分类`;
 }
 function flashHint(msg) {
   const hint = document.getElementById('sel-hint'); if (!hint) return;
@@ -196,7 +205,7 @@ function renderBloggerResult(chosen) {
   paintResult({ bmName: bm.name, weakName: weak.name, bmTag: '对标', weakTag: '待优化', problems, advices, dims, planName: `${bm.name} vs ${weak.name}` });
 }
 
-// ============ 视频对比 ============
+// ============ 内容对比 ============
 function renderVideoResult(chosen) {
   const [bm, weak] = [...chosen].sort((a, b) => (b.view ?? 0) - (a.view ?? 0));
   const bs = videoStat(bm), ws = videoStat(weak);
@@ -223,7 +232,7 @@ function renderVideoResult(chosen) {
       ${cmpText('形式/时长', bm.name, weak.name, durOf(bm), durOf(weak))}
       ${cmpText('点赞率', bm.name, weak.name, rate(bs.like, bs.view), rate(ws.like, ws.view))}
       ${cmpText('收藏率', bm.name, weak.name, rate(bs.collect, bs.view), rate(ws.collect, ws.view))}`;
-    return `${cmpText('变现线索', bm.name, weak.name, '（视频维度暂不评估账号变现）', '—')}
+    return `${cmpText('变现线索', bm.name, weak.name, '（内容维度暂不评估账号变现）', '—')}
       <div class="muted small mt-2">商业变现更适合在「博主对比」维度分析。</div>`;
   };
   paintResult({ bmName: nameOf(bm), weakName: nameOf(weak), bmTag: '爆款样本', weakTag: '待优化', problems, advices, dims, planName: `${nameOf(bm)} vs ${nameOf(weak)}` });

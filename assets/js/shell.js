@@ -84,7 +84,7 @@ function togglePop() {
   if (p.style.display === 'none') { renderPop(); p.style.display = 'block'; } else { closePop(); }
 }
 
-let popDim = 'content';   // 弹窗当前维度：content(视频) | blogger(博主)
+let popDim = 'content';   // 弹窗当前维度：content(内容) | blogger(博主)
 
 function renderPop() {
   const p = document.getElementById('basket-pop');
@@ -96,17 +96,17 @@ function renderPop() {
         <div class="msg small">还没有加入任何对比对象<br>去「爆款拆解」或「挖掘热点」点「加入对比」</div></div>`;
     return;
   }
-  const videos = basket.ofType('content');
+  const contents = basket.ofType('content');
   const bloggers = basket.ofType('blogger');
   // 默认维度选有内容的那一类
-  if (popDim === 'content' && !videos.length && bloggers.length) popDim = 'blogger';
-  if (popDim === 'blogger' && !bloggers.length && videos.length) popDim = 'content';
-  const list = popDim === 'content' ? videos : bloggers;
+  if (popDim === 'content' && !contents.length && bloggers.length) popDim = 'blogger';
+  if (popDim === 'blogger' && !bloggers.length && contents.length) popDim = 'content';
+  const list = popDim === 'content' ? contents : bloggers;
 
   p.innerHTML = `
     <div class="basket-pop-head">对比篮（${all.length}）<span class="muted small" style="font-weight:400">同类型任选 2 个对比</span></div>
     <div class="segment" style="margin:8px 10px 4px">
-      <button data-dim="content" class="${popDim === 'content' ? 'active' : ''}">🎬 视频 ${videos.length}</button>
+      <button data-dim="content" class="${popDim === 'content' ? 'active' : ''}">🎬 内容 ${contents.length}</button>
       <button data-dim="blogger" class="${popDim === 'blogger' ? 'active' : ''}">👤 博主 ${bloggers.length}</button>
     </div>
     <div class="basket-pop-list">
@@ -137,7 +137,7 @@ function videoItem(it) {
       <div class="pop-thumb">${it.cover ? `<img src="${esc(it.cover)}" onerror="this.replaceWith(document.createTextNode('🎬'))">` : '🎬'}</div>
       <div style="flex:1;min-width:0">
         <div class="name" style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.title || it.name)}</div>
-        <div class="muted small">视频${it.author ? ' · @' + esc(it.author) : ''}${it.view != null ? ' · ' + fmtNum(it.view) + '播放' : ''}</div>
+        <div class="type-line"><span class="type-chip">内容</span><span class="muted small">${it.author ? '@' + esc(it.author) + ' · ' : ''}${it.view != null ? fmtNum(it.view) + '播放' : '内容样本'}</span></div>
       </div>
       <button class="btn ghost sm" data-act="del" title="移除">✕</button>
     </div>`;
@@ -148,7 +148,7 @@ function bloggerItem(it) {
       <div class="avatar" style="width:34px;height:34px;flex:0 0 34px;font-size:13px">${esc((it.name || '?')[0])}</div>
       <div style="flex:1;min-width:0">
         <div class="name" style="font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(it.name)}</div>
-        <div class="muted small">博主${it.domain ? ' · ' + esc(it.domain) : ''}${it.fans != null ? ' · ' + fmtNum(it.fans) + '粉' : ''}</div>
+        <div class="type-line"><span class="type-chip">博主</span><span class="muted small">${it.domain ? esc(it.domain) : '账号样本'}${it.fans != null ? ' · ' + fmtNum(it.fans) + '粉' : ''}</span></div>
       </div>
       <button class="btn ghost sm" data-act="del" title="移除">✕</button>
     </div>`;
