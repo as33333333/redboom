@@ -10,15 +10,20 @@ services:
 
   # 应用后端（本项目）
   app:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
     environment:
+      - DATABASE_URL=${DATABASE_URL:-sqlite:////app/site/backend/app.db}
       - DOUYIN_API_BASE=http://douyin-api:80   # 留空则走 mock
+      - DOUYIN_MIN_REQUEST_INTERVAL_SECONDS=${DOUYIN_MIN_REQUEST_INTERVAL_SECONDS:-2.0}
+      - DOUYIN_MAX_POSTS_PER_FETCH=${DOUYIN_MAX_POSTS_PER_FETCH:-10}
       - LLM_API_KEY=${LLM_API_KEY:-}            # 留空则分析走 mock
       - LLM_BASE_URL=${LLM_BASE_URL:-https://api.deepseek.com}
       - LLM_MODEL=${LLM_MODEL:-deepseek-chat}
     volumes:
-      - ./:/app/site:ro
+      - ./:/app/site
     depends_on:
       - douyin-api
