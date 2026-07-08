@@ -37,6 +37,23 @@ uvicorn main:app --reload --port 8000
 
 或一键：`LLM_API_KEY=xxx docker compose up`。
 
+后端启动后可用：
+
+```bash
+curl http://localhost:8000/api/health
+curl http://localhost:8000/api/db/health
+```
+
+一次性真实取数探测（需先配置可用的 `DOUYIN_API_BASE`，并使用你有权限分析的公开对象链接或 ID）：
+
+```bash
+curl -X POST http://localhost:8000/api/fetch/probe \
+  -H 'Content-Type: application/json' \
+  -d '{"targetType":"content","url":"<抖音作品链接或 aweme_id>"}'
+```
+
+说明：项目只做低频、缓存、授权数据接入，不做模拟真人点击、绕过风控或批量规避限制的抓取。
+
 ---
 
 ## 目录
@@ -48,6 +65,8 @@ redboom/
 │   ├── js/     shell store format render api analyzer breakdown discover compare
 │   └── mock/   bloggers / analysis / rank
 └── backend/    FastAPI：main + douyin_client + normalize + metrics + analyzer + llm + cache + compare + prompts
+├── database/   SQLite schema
+└── docs/       后端/数据库等技术方案
 ```
 
 ---

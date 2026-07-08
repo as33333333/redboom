@@ -13,16 +13,27 @@ douyin_client.py — 抖音数据获取（GitHub skill 封装）
 """
 import os
 import json
+import re
+import threading
+import time
 from pathlib import Path
 import httpx
 
 DOUYIN_API_BASE = os.getenv("DOUYIN_API_BASE", "").rstrip("/")
+MIN_REQUEST_INTERVAL_SECONDS = float(os.getenv("DOUYIN_MIN_REQUEST_INTERVAL_SECONDS", "2.0"))
+MAX_POSTS_PER_FETCH = int(os.getenv("DOUYIN_MAX_POSTS_PER_FETCH", "10"))
 ROOT = Path(__file__).resolve().parent.parent
 _MOCK = json.loads((ROOT / "assets/mock/bloggers.json").read_text("utf-8"))["bloggers"]
+_LAST_REQUEST_AT = 0.0
+_REQUEST_LOCK = threading.Lock()
 
 
 def _use_mock() -> bool:
     return not DOUYIN_API_BASE
+
+
+def live_available() -> bool:
+    return bool(DOUYIN_API_BASE)
 
 
 def list_bloggers():
@@ -35,11 +46,13 @@ def fetch_blogger(url_or_id: str) -> dict:
     if _use_mock():
         return next((b for b in _MOCK if b["id"] == url_or_id), _MOCK[0])
     sec_uid = _extract_sec_uid(url_or_id)
-    with httpx.Client(timeout=20) as c:
-        info = c.get(f"{DOUYIN_API_BASE}/api/douyin/web/handler_user_profile",
-                     params={"sec_user_id": sec_uid}).json()
-        posts = c.get(f"{DOUYIN_API_BASE}/api/douyin/web/fetch_user_post_videos",
-                      params={"sec_user_id": sec_uid, "max_cursor": 0, "count": 20}).json()
+    with httpx.Client(timeout=30, headers=_headers()) as c:
+        info = _get_json(c, "/api/douyin/web/handler_user_profile", {"sec_user_id": sec_uid})
+        posts = _get_json(
+            c,
+            "/api/douyin/web/fetch_user_post_videos",
+            {"sec_user_id": sec_uid, "max_cursor": 0, "count": MAX_POSTS_PER_FETCH},
+        )
     return {"_raw_info": info, "_raw_posts": posts, "id": sec_uid}
 
 
@@ -52,15 +65,51 @@ def fetch_content(url_or_id: str) -> dict:
                     return {**c, "author": b["name"], "domain": b["domain"]}
         return _MOCK[0]["contents"][0]
     aweme_id = _extract_aweme_id(url_or_id)
-    with httpx.Client(timeout=20) as c:
-        return c.get(f"{DOUYIN_API_BASE}/api/douyin/web/fetch_one_video",
-                     params={"aweme_id": aweme_id}).json()
+    with httpx.Client(timeout=30, headers=_headers()) as c:
+        return _get_json(c, "/api/douyin/web/fetch_one_video", {"aweme_id": aweme_id})
 
 
-# --- 链接解析（真实实现时补全短链跳转/正则） ---
+# --- 安全低频请求：不做绕风控模拟，只调用用户自建/授权的数据服务 ---
+def _headers() -> dict:
+    return {
+        "Accept": "application/json",
+        "User-Agent": "redboom-backend/0.1 (+https://github.com/as33333333/redboom)",
+    }
+
+
+def _get_json(client: httpx.Client, path: str, params: dict) -> dict:
+    _throttle()
+    resp = client.get(f"{DOUYIN_API_BASE}{path}", params=params)
+    resp.raise_for_status()
+    return resp.json()
+
+
+def _throttle() -> None:
+    global _LAST_REQUEST_AT
+    with _REQUEST_LOCK:
+        now = time.monotonic()
+        wait = MIN_REQUEST_INTERVAL_SECONDS - (now - _LAST_REQUEST_AT)
+        if wait > 0:
+            time.sleep(wait)
+        _LAST_REQUEST_AT = time.monotonic()
+
+
+# --- 链接解析：仅提取显式 id，不解析短链跳转 ---
 def _extract_sec_uid(url: str) -> str:
-    return url.rsplit("/", 1)[-1]
+    text = (url or "").strip()
+    m = re.search(r"sec_user_id=([^&#?/]+)", text)
+    if m:
+        return m.group(1)
+    m = re.search(r"/user/([^/?#]+)", text)
+    if m:
+        return m.group(1)
+    return text.rstrip("/").rsplit("/", 1)[-1]
 
 
 def _extract_aweme_id(url: str) -> str:
-    return url.rsplit("/", 1)[-1]
+    text = (url or "").strip()
+    for pattern in (r"aweme_id=([0-9]+)", r"modal_id=([0-9]+)", r"/video/([0-9]+)", r"/note/([0-9]+)"):
+        m = re.search(pattern, text)
+        if m:
+            return m.group(1)
+    return text.rstrip("/").rsplit("/", 1)[-1]
